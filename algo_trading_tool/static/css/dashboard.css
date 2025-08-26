@@ -1,0 +1,416 @@
+/* Custom Dashboard Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Portfolio Cards */
+.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+.bg-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+}
+
+/* Tables */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Status Badges */
+.badge {
+    border-radius: 20px;
+    padding: 0.5em 0.75em;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-connected {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-disconnected {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status-paper {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+/* P&L Colors */
+.pnl-positive {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.pnl-negative {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.pnl-neutral {
+    color: #6c757d;
+    font-weight: 600;
+}
+
+/* Form Controls */
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Switch Controls */
+.form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.form-switch .form-check-input {
+    width: 2em;
+    margin-left: -2.5em;
+}
+
+/* Modal Customization */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1.5rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Alert Customization */
+.alert {
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 1rem;
+}
+
+.alert-dismissible .btn-close {
+    padding: 0.5rem 0.75rem;
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 1rem 0;
+}
+
+/* Navigation Pills */
+.nav-pills .nav-link {
+    border-radius: 25px;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #0d6efd;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        margin-bottom: 0.5rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Trading Status Indicators */
+.trading-active {
+    border-left: 4px solid #28a745;
+}
+
+.trading-inactive {
+    border-left: 4px solid #dc3545;
+}
+
+.trading-paper {
+    border-left: 4px solid #ffc107;
+}
+
+/* Position Type Indicators */
+.position-long {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.position-short {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Strategy Tags */
+.strategy-momentum {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.strategy-mean-reversion {
+    background-color: rgba(111, 66, 193, 0.1);
+    color: #6f42c1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.strategy-volatility {
+    background-color: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.strategy-options {
+    background-color: rgba(32, 201, 151, 0.1);
+    color: #20c997;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+/* Backtest Results */
+.backtest-metric {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    margin-bottom: 1rem;
+}
+
+.backtest-metric h6 {
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.backtest-metric .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #495057;
+}
+
+.backtest-metric.positive .value {
+    color: #28a745;
+}
+
+.backtest-metric.negative .value {
+    color: #dc3545;
+}
+
+/* Risk Meter */
+.risk-meter {
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.risk-meter-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745 0%, #ffc107 50%, #dc3545 100%);
+    transition: width 0.3s ease;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #ffffff;
+    }
+    
+    .card {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+    
+    .table {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+    
+    .table thead th {
+        background-color: #2a2a2a;
+        color: #ffffff;
+    }
+    
+    .form-control,
+    .form-select {
+        background-color: #2a2a2a;
+        border-color: #495057;
+        color: #ffffff;
+    }
+    
+    .modal-content {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+}

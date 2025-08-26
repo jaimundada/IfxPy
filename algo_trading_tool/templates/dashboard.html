@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithmic Trading Tool - Dashboard</title>
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-chart-line"></i> AlgoTrader Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#backtest">Backtesting</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#strategies">Strategies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#positions">Positions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings">Settings</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <span class="nav-item">
+                        <span class="nav-link">
+                            <span id="connection-status" class="badge bg-secondary">
+                                <i class="fas fa-circle"></i> Connecting...
+                            </span>
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-3">
+        <!-- Alert Section -->
+        <div id="alert-container"></div>
+        
+        <!-- Trading Controls -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-play-circle"></i> Trading Controls</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <button id="start-trading" class="btn btn-success">
+                                <i class="fas fa-play"></i> Start Trading
+                            </button>
+                            <button id="stop-trading" class="btn btn-danger" disabled>
+                                <i class="fas fa-stop"></i> Stop Trading
+                            </button>
+                            <button id="emergency-stop" class="btn btn-outline-danger">
+                                <i class="fas fa-exclamation-triangle"></i> Emergency Stop
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <label for="trading-symbols" class="form-label">Symbols to Trade:</label>
+                            <select id="trading-symbols" class="form-select" multiple>
+                                <option value="NIFTY" selected>NIFTY</option>
+                                <option value="BANKNIFTY" selected>BANKNIFTY</option>
+                                <option value="FINNIFTY">FINNIFTY</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-cog"></i> Strategy Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="momentum-strategy" checked>
+                            <label class="form-check-label" for="momentum-strategy">Momentum Strategy</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="mean-reversion-strategy" checked>
+                            <label class="form-check-label" for="mean-reversion-strategy">Mean Reversion Strategy</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="volatility-strategy" checked>
+                            <label class="form-check-label" for="volatility-strategy">Volatility Strategy</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="options-selling-strategy" checked>
+                            <label class="form-check-label" for="options-selling-strategy">Options Selling</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="options-buying-strategy" checked>
+                            <label class="form-check-label" for="options-buying-strategy">Options Buying</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Portfolio Value</h6>
+                                <h4 id="portfolio-value">₹0.00</h4>
+                            </div>
+                            <div>
+                                <i class="fas fa-wallet fa-2x"></i>
+                            </div>
+                        </div>
+                        <small>Today's P&L: <span id="daily-pnl">₹0.00</span></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Active Positions</h6>
+                                <h4 id="active-positions">0</h4>
+                            </div>
+                            <div>
+                                <i class="fas fa-chart-line fa-2x"></i>
+                            </div>
+                        </div>
+                        <small>Max Allowed: 10</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Win Rate</h6>
+                                <h4 id="win-rate">0%</h4>
+                            </div>
+                            <div>
+                                <i class="fas fa-trophy fa-2x"></i>
+                            </div>
+                        </div>
+                        <small>Last 30 days</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Risk Exposure</h6>
+                                <h4 id="risk-exposure">0%</h4>
+                            </div>
+                            <div>
+                                <i class="fas fa-shield-alt fa-2x"></i>
+                            </div>
+                        </div>
+                        <small>Of total capital</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-area"></i> Equity Curve</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="equity-chart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-pie"></i> Strategy Performance</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="strategy-chart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Positions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-list"></i> Current Positions</h5>
+                        <button class="btn btn-sm btn-outline-primary" onclick="refreshPositions()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="positions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol</th>
+                                        <th>Strategy</th>
+                                        <th>Type</th>
+                                        <th>Quantity</th>
+                                        <th>Entry Price</th>
+                                        <th>Current Price</th>
+                                        <th>P&L</th>
+                                        <th>P&L %</th>
+                                        <th>Target</th>
+                                        <th>Stop Loss</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="11" class="text-center text-muted">No active positions</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Trades -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-history"></i> Recent Trades</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm" id="trades-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Symbol</th>
+                                        <th>Strategy</th>
+                                        <th>Type</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>P&L</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">No recent trades</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backtesting Section -->
+        <div class="row mb-4" id="backtest-section" style="display: none;">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-flask"></i> Backtest Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="backtest-form">
+                            <div class="mb-3">
+                                <label for="backtest-symbol" class="form-label">Symbol</label>
+                                <select class="form-select" id="backtest-symbol">
+                                    <option value="NIFTY">NIFTY</option>
+                                    <option value="BANKNIFTY">BANKNIFTY</option>
+                                    <option value="FINNIFTY">FINNIFTY</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="backtest-start-date" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="backtest-start-date">
+                            </div>
+                            <div class="mb-3">
+                                <label for="backtest-end-date" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="backtest-end-date">
+                            </div>
+                            <div class="mb-3">
+                                <label for="backtest-capital" class="form-label">Initial Capital</label>
+                                <input type="number" class="form-control" id="backtest-capital" value="100000">
+                            </div>
+                            <div class="mb-3">
+                                <label for="backtest-strategy" class="form-label">Strategy</label>
+                                <select class="form-select" id="backtest-strategy">
+                                    <option value="momentum">Momentum</option>
+                                    <option value="mean_reversion">Mean Reversion</option>
+                                    <option value="volatility">Volatility</option>
+                                    <option value="all">All Strategies</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-play"></i> Run Backtest
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-line"></i> Backtest Results</h5>
+                    </div>
+                    <div class="card-body" id="backtest-results">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-chart-line fa-3x mb-3"></i>
+                            <p>Run a backtest to see results here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    
+    <!-- Position Details Modal -->
+    <div class="modal fade" id="position-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Position Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="position-modal-body">
+                    <!-- Position details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="close-position-btn">Close Position</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settings-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Risk Management</h6>
+                            <div class="mb-3">
+                                <label for="max-risk-per-trade" class="form-label">Max Risk Per Trade (%)</label>
+                                <input type="number" class="form-control" id="max-risk-per-trade" value="2" min="0.1" max="10" step="0.1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="max-portfolio-risk" class="form-label">Max Portfolio Risk (%)</label>
+                                <input type="number" class="form-control" id="max-portfolio-risk" value="6" min="1" max="20" step="0.5">
+                            </div>
+                            <div class="mb-3">
+                                <label for="default-stop-loss" class="form-label">Default Stop Loss (%)</label>
+                                <input type="number" class="form-control" id="default-stop-loss" value="2" min="0.5" max="10" step="0.1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="default-target" class="form-label">Default Target (%)</label>
+                                <input type="number" class="form-control" id="default-target" value="4" min="1" max="20" step="0.1">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Broker Settings</h6>
+                            <div class="mb-3">
+                                <label for="active-broker" class="form-label">Active Broker</label>
+                                <select class="form-select" id="active-broker">
+                                    <option value="angel_one">Angel One</option>
+                                    <option value="dhan">Dhan</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="data-source" class="form-label">Data Source</label>
+                                <select class="form-select" id="data-source">
+                                    <option value="auto">Auto (Best Available)</option>
+                                    <option value="yahoo">Yahoo Finance (Delayed)</option>
+                                    <option value="alpha_vantage">Alpha Vantage (Real-time)</option>
+                                    <option value="polygon">Polygon.io (Real-time)</option>
+                                    <option value="twelvedata">Twelve Data (Real-time)</option>
+                                </select>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="paper-trading" checked>
+                                <label class="form-check-label" for="paper-trading">Paper Trading Mode</label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="auto-trading">
+                                <label class="form-check-label" for="auto-trading">Auto Trading (Live)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-settings">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
