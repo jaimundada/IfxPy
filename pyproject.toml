@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "optz"
+version = "0.1.0"
+description = "Index and stock options algorithmic trading toolkit with backtesting and live connectors"
+authors = [{ name = "Your Name" }]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+optz = "optz.cli:app"
+
+[tool.setuptools]
+packages = ["optz", "optz.data", "optz.pricing", "optz.selection", "optz.strategy", "optz.backtest", "optz.broker", "optz.live", "optz.utils"]
