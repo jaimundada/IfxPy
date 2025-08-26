@@ -1,0 +1,19 @@
+symbol: SPY
+backtest:
+  date: '2024-08-02'
+  capital: 100000
+strategy:
+  momentum_atm:
+    iv: 0.2
+    sl_pct: 0.3
+    tp_pct: 0.5
+    ma_fast: 9
+    ma_slow: 21
+    strike_step: 1.0
+    option_multiplier: 100
+broker:
+  paper: {}
+  angel:
+    api_key: ''
+  dhan:
+    api_key: ''
